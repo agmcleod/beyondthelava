@@ -18,12 +18,13 @@ class GamePlayState
   attr_accessor :state_id, :maps, :player, :death_blocks
 
   def initialize(state_id)
+    @counter = 0
     self.state_id = state_id
     player_sheet = Image.new "resources/player.png"
     self.player = Sprite.new :x => 100, :y => 0, :graphics => {
       :standing => player_sheet.getSubImage(0, 0, TILE_SIZE * 2, TILE_SIZE * 4),
       :attacking => player_sheet.getSubImage(TILE_SIZE * 2, 0, TILE_SIZE * 6, TILE_SIZE * 4)
-    }, :immunity_level => 0
+    }, :immunity_level => 3
 
     @sprites = [self.player]
 
@@ -54,16 +55,24 @@ class GamePlayState
   end
 
   def update(gc, sbg, delta)
+    @counter += delta
     @sprites.each do |sprite|
       death_blocks.each do |block|
         if sprite.intersects(block[:x], block[:y], block[:right_x], block[:bottom_y])
-          if sprite.immunity_level != -1
+          if sprite.immunity_level == 0
             sprite.kill
+          end
+          if @counter >= 1000
+            sprite.immunity_level -= 1
           end
         else
           sprite.fall delta
         end
       end
+    end
+
+    if @counter > 1000
+      @counter -= 1000
     end
 
     unless player.alive
