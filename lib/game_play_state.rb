@@ -23,7 +23,9 @@ class GamePlayState
     self.player = Sprite.new :x => 100, :y => 0, :graphics => {
       :standing => player_sheet.getSubImage(0, 0, TILE_SIZE * 2, TILE_SIZE * 4),
       :attacking => player_sheet.getSubImage(TILE_SIZE * 2, 0, TILE_SIZE * 6, TILE_SIZE * 4)
-    }
+    }, :immunity_level => 0
+
+    @sprites = [self.player]
 
     self.death_blocks = [
       {
@@ -52,12 +54,18 @@ class GamePlayState
   end
 
   def update(gc, sbg, delta)
-    player.fall delta
-    death_blocks.each do |block|
-      if player.intersects block[:x], block[:y], block[:right_x], block[:bottom_y]
-        player.kill
-      end  
+    @sprites.each do |sprite|
+      death_blocks.each do |block|
+        if sprite.intersects(block[:x], block[:y], block[:right_x], block[:bottom_y])
+          if sprite.immunity_level != -1
+            sprite.kill
+          end
+        else
+          sprite.fall delta
+        end
+      end
     end
+
     unless player.alive
       gc.exit
     end
@@ -119,16 +127,21 @@ class GamePlayState
   def controllerUpReleased(arg0)
   end
 
-  def mouseClicked(arg0, arg1, arg2, arg3)
+  def mouseClicked(button, x, y, count)
+    puts "clicked"
   end
 
   def mouseMoved(arg0, arg1, arg2, arg3)
   end
 
-  def mousePressed(arg0, arg1, arg2, arg3)
+  def mousePressed(button, x, y, count)
+    puts "pressed"
+    self.player.x = x
+    self.player.y = y
   end
 
   def mouseReleased(arg0, arg1, arg2, arg3)
+    puts "released"
   end
 
   def mouseWheelMoved(arg0)
