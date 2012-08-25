@@ -19,10 +19,10 @@ class GamePlayState
 
   def initialize(state_id)
     self.state_id = state_id
-    player_sheet = Image.new "resources/playersheet.png"
+    player_sheet = Image.new "resources/player.png"
     self.player = Sprite.new :x => 100, :y => 0, :graphics => {
-      :standing => player_sheet.getSubImage 0, 0, TILE_SIZE * 4, TILE_SIZE * 4,
-      :attacking => player_sheet.getSubImage TILE_SIZE * 4, 0, TILE_SIZE * 8, TILE_SIZE * 4
+      :standing => player_sheet.getSubImage(0, 0, TILE_SIZE * 2, TILE_SIZE * 4),
+      :attacking => player_sheet.getSubImage(TILE_SIZE * 2, 0, TILE_SIZE * 6, TILE_SIZE * 4)
     }
   end
 
@@ -40,11 +40,13 @@ class GamePlayState
   end
 
   def render(gc, sbg, g)
+    # minus 1 for 0 indexing
     self.maps[0].render 0, (TILE_Y - 1) * TILE_SIZE
+    self.player.draw
   end
 
   def update(gc, sbg, delta)
-
+    player.fall delta
   end
 
   def isAcceptingInput
