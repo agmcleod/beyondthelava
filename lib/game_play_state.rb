@@ -41,12 +41,12 @@ class GamePlayState
     # initialize enemy stuff
     enemy_sheet = Image.new "resources/enemy.png"
     @sprites << Enemy.new(:x => 600, :y => 300, :graphics => {
-      :standing_left => enemy_sheet.getSubImage(0, 0, TILE_SIZE * 2, TILE_SIZE * 4),
-      :moving_left => enemy_sheet.getSubImage(TILE_SIZE * 2, 0, TILE_SIZE * 4, TILE_SIZE * 4),
-      :moving_right => enemy_sheet.getSubImage(TILE_SIZE * 4, 0, TILE_SIZE * 6, TILE_SIZE * 4),
-      :standing_right => enemy_sheet.getSubImage(TILE_SIZE * 6, 0, TILE_SIZE * 8, TILE_SIZE * 4),
-      :dead_left => enemy_sheet.getSubImage(TILE_SIZE * 8, 0, TILE_SIZE * 10, TILE_SIZE * 4),
-      :dead_right => enemy_sheet.getSubImage(TILE_SIZE * 10, 0, TILE_SIZE * 12, TILE_SIZE * 4)
+      :standing_left => enemy_sheet.getSubImage(0, 0, TILE_SIZE * 2, TILE_SIZE * 3),
+      :moving_left => enemy_sheet.getSubImage(TILE_SIZE * 2, 0, TILE_SIZE * 4, TILE_SIZE * 3),
+      :moving_right => enemy_sheet.getSubImage(TILE_SIZE * 4, 0, TILE_SIZE * 6, TILE_SIZE * 3),
+      :standing_right => enemy_sheet.getSubImage(TILE_SIZE * 6, 0, TILE_SIZE * 8, TILE_SIZE * 3),
+      :dead_left => enemy_sheet.getSubImage(TILE_SIZE * 8, 0, TILE_SIZE * 10, TILE_SIZE * 3),
+      :dead_right => enemy_sheet.getSubImage(TILE_SIZE * 10, 0, TILE_SIZE * 12, TILE_SIZE * 3)
     }, :state => :standing_left)
   end
 
@@ -80,12 +80,14 @@ class GamePlayState
       if input.isMousePressed(0)
         player.x = input.getMouseX - (player.width / 2)
         player.y = input.getMouseY - (player.height / 2)
+        player.teleporting = true
       end
 
       @sprites.each do |sprite|
         colliding = false
         death_blocks.each do |block|
           if sprite.intersects(block[:x], block[:y], block[:right_x], block[:bottom_y])
+            sprite.y = block[:y] - sprite.height
             colliding = true
           end
         end
@@ -108,6 +110,7 @@ class GamePlayState
 
       if @counter > 1000
         @counter -= 1000
+        player.teleporting = false
       end
     end
 

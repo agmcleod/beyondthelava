@@ -26,7 +26,9 @@ class Sprite
   end
 
   def draw
-    current_graphic.draw x, y
+    if @alive
+      current_graphic.draw x, y
+    end
   end
 
   def intersects(x, y, right_x, bottom_y)
