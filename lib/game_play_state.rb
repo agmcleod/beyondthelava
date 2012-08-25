@@ -15,7 +15,7 @@ class GamePlayState
   include GameInfo
 
 
-  attr_accessor :state_id, :maps, :player
+  attr_accessor :state_id, :maps, :player, :death_blocks
 
   def initialize(state_id)
     self.state_id = state_id
@@ -24,6 +24,12 @@ class GamePlayState
       :standing => player_sheet.getSubImage(0, 0, TILE_SIZE * 2, TILE_SIZE * 4),
       :attacking => player_sheet.getSubImage(TILE_SIZE * 2, 0, TILE_SIZE * 6, TILE_SIZE * 4)
     }
+
+    self.death_blocks = [
+      {
+        :x => 0, :y => (TILE_Y - 1) * TILE_SIZE, :right_x => 800, :bottom_y => TILE_Y * TILE_SIZE
+      }
+    ]
   end
 
   def getID
@@ -40,13 +46,22 @@ class GamePlayState
   end
 
   def render(gc, sbg, g)
-    # minus 1 for 0 indexing
+    # minus 1 to render one tile space above bottom
     self.maps[0].render 0, (TILE_Y - 1) * TILE_SIZE
     self.player.draw
   end
 
   def update(gc, sbg, delta)
     player.fall delta
+    death_blocks.each do |block|
+      if player.intersects block[:x], block[:y], block[:right_x], block[:bottom_y]
+        player.kill
+      end  
+    end
+    unless player.alive
+      gc.exit
+    end
+    
   end
 
   def isAcceptingInput
