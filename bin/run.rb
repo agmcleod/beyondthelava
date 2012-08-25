@@ -28,6 +28,6 @@ class ExampleGame < StateBasedGame
 end
 
 app = AppGameContainer.new(ExampleGame.new)
-app.setDisplayMode 800, 600, false
+app.setDisplayMode 800, 640, false
 app.setVSync true
 app.start()

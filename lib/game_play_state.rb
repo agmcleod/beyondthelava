@@ -12,11 +12,18 @@ java_import org.newdawn.slick.tiled.TiledMap
 
 class GamePlayState 
   include GameState
+  include GameInfo
 
-  attr_accessor :state_id, :maps
+
+  attr_accessor :state_id, :maps, :player
 
   def initialize(state_id)
     self.state_id = state_id
+    player_sheet = Image.new "resources/playersheet.png"
+    self.player = Sprite.new :x => 100, :y => 0, :graphics => {
+      :standing => player_sheet.getSubImage 0, 0, TILE_SIZE * 4, TILE_SIZE * 4,
+      :attacking => player_sheet.getSubImage TILE_SIZE * 4, 0, TILE_SIZE * 8, TILE_SIZE * 4
+    }
   end
 
   def getID
@@ -33,7 +40,7 @@ class GamePlayState
   end
 
   def render(gc, sbg, g)
-    self.maps[0].render 0, 576
+    self.maps[0].render 0, (TILE_Y - 1) * TILE_SIZE
   end
 
   def update(gc, sbg, delta)
