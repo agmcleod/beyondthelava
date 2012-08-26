@@ -1,4 +1,4 @@
-java_import org.newdawn.slick.AngelCodeFont
+java_import org.newdawn.slick.UnicodeFont
 java_import org.lwjgl.input.Keyboard
 java_import org.lwjgl.opengl.Display
 java_import org.lwjgl.opengl.GL11
@@ -9,13 +9,20 @@ java_import org.newdawn.slick.Input
 java_import org.newdawn.slick.SlickException
 java_import org.newdawn.slick.state.GameState
 java_import org.newdawn.slick.state.StateBasedGame
-java_import org.newdawn.slick.tiled.TiledMap
+java_import org.newdawn.slick.Color
+java_import org.newdawn.slick.font.effects.ColorEffect
+java_import java.awt.Font
 
 class BeginGameState 
   include GameState
 
   def initialize(state_id)
-    
+    arial = Font.new "Arial", Font::PLAIN, 24
+    @font = UnicodeFont.new arial
+    @font.addAsciiGlyphs
+    @font.addGlyphs 400, 600
+    @font.getEffects.add ColorEffect.new(java.awt.Color::BLUE)
+    @font.loadGlyphs
   end
 
   def getID
@@ -30,7 +37,10 @@ class BeginGameState
   end
 
   def render(gc, sbg, g)
-        
+    @font.drawString 30, 100, "The idea is to not touch the lava"
+    @font.drawString 30, 130, "Just click to teleport and click to kill"
+    @font.drawString 30, 160, "The more you kill the stronger you are against the lava"
+    @font.drawString 30, 210, "Press enter to continue"
   end
 
   def update(gc, sbg, delta)    

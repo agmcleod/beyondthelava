@@ -1,3 +1,4 @@
+java_import org.newdawn.slick.UnicodeFont
 java_import org.lwjgl.input.Keyboard
 java_import org.lwjgl.opengl.Display
 java_import org.lwjgl.opengl.GL11
@@ -48,6 +49,13 @@ class GamePlayState
       :dead_left => enemy_sheet.getSubImage(TILE_SIZE * 8, 0, TILE_SIZE * 10, TILE_SIZE * 3),
       :dead_right => enemy_sheet.getSubImage(TILE_SIZE * 10, 0, TILE_SIZE * 12, TILE_SIZE * 3)
     }, :state => :standing_left)
+
+    arial = Font.new "Arial", Font::PLAIN, 24
+    @font = UnicodeFont.new arial
+    @font.addAsciiGlyphs
+    @font.addGlyphs 400, 600
+    @font.getEffects.add ColorEffect.new(java.awt.Color::GREEN)
+    @font.loadGlyphs
   end
 
   def getID
@@ -69,7 +77,7 @@ class GamePlayState
     @sprites.each do |sprite|
       sprite.draw
     end
-    
+    @font.drawString 20, 20, "Immunity: #{@player.immunity_level}"
   end
 
   def update(gc, sbg, delta)
