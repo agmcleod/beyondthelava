@@ -21,7 +21,7 @@ class BeginGameState
     @font = UnicodeFont.new arial
     @font.addAsciiGlyphs
     @font.addGlyphs 400, 600
-    @font.getEffects.add ColorEffect.new(java.awt.Color::BLUE)
+    @font.getEffects.add ColorEffect.new(java.awt.Color::GREEN)
     @font.loadGlyphs
   end
 
@@ -40,7 +40,8 @@ class BeginGameState
     @font.drawString 30, 100, "The idea is to not touch the lava"
     @font.drawString 30, 130, "Just click to teleport and click to kill"
     @font.drawString 30, 160, "The more you kill the stronger you are against the lava"
-    @font.drawString 30, 210, "Press enter to continue"
+    @font.drawString 30, 190, "You can press space anytime to pause"
+    @font.drawString 30, 240, "Press enter to continue"
   end
 
   def update(gc, sbg, delta)    

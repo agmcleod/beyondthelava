@@ -39,16 +39,7 @@ class GamePlayState
       }
     ]
 
-    # initialize enemy stuff
-    enemy_sheet = Image.new "resources/enemy.png"
-    @sprites << Enemy.new(:x => 600, :y => 300, :graphics => {
-      :standing_left => enemy_sheet.getSubImage(0, 0, TILE_SIZE * 2, TILE_SIZE * 3),
-      :moving_left => enemy_sheet.getSubImage(TILE_SIZE * 2, 0, TILE_SIZE * 4, TILE_SIZE * 3),
-      :moving_right => enemy_sheet.getSubImage(TILE_SIZE * 4, 0, TILE_SIZE * 6, TILE_SIZE * 3),
-      :standing_right => enemy_sheet.getSubImage(TILE_SIZE * 6, 0, TILE_SIZE * 8, TILE_SIZE * 3),
-      :dead_left => enemy_sheet.getSubImage(TILE_SIZE * 8, 0, TILE_SIZE * 10, TILE_SIZE * 3),
-      :dead_right => enemy_sheet.getSubImage(TILE_SIZE * 10, 0, TILE_SIZE * 12, TILE_SIZE * 3)
-    }, :state => :standing_left, :is_npc => true)
+    generate_enemy
 
     arial = Font.new "Arial", Font::PLAIN, 24
     @font = UnicodeFont.new arial
@@ -134,18 +125,38 @@ class GamePlayState
     
   end
 
+  def generate_enemy
+    enemy_sheet = Image.new "resources/enemy.png"
+
+    available_images = [
+      enemy_sheet.getSubImage(0, 0, TILE_SIZE * 2, TILE_SIZE * 3),
+      enemy_sheet.getSubImage(TILE_SIZE * 2, 0, TILE_SIZE * 4, TILE_SIZE * 3),
+      enemy_sheet.getSubImage(TILE_SIZE * 4, 0, TILE_SIZE * 6, TILE_SIZE * 3),
+      enemy_sheet.getSubImage(TILE_SIZE * 6, 0, TILE_SIZE * 8, TILE_SIZE * 3)
+    ]
+
+    image_to_use = available_images[rand(4)]
+
+    rand_x = rand 680
+    rand_y = rand 480
+
+    @sprites << Enemy.new(:x => rand_x, :y => rand_y, :graphics => {
+      :standing => image_to_use,
+      :dead => enemy_sheet.getSubImage(TILE_SIZE * 8, 0, TILE_SIZE * 10, TILE_SIZE * 3)
+    }, :state => :standing, :is_npc => true)
+  end
+
   def teleport_action(input)
     player.x = input.getMouseX - (player.width / 2)
     player.y = input.getMouseY - (player.height / 2)
     player.teleporting = true
 
     @sprites.each do |sprite|
-      if sprite.is_a? Enemy
-        if player.intersects sprite.x, sprite.y, sprite.right_x, sprite.bottom_y
-          sprite.kill
-          player.max_immunity += 3
-          player.y = 150
-        end
+      if sprite.is_a?(Enemy) && sprite.alive && player.intersects sprite.x, sprite.y, sprite.right_x, sprite.bottom_y
+        sprite.kill
+        player.max_immunity += 1
+        player.y = 250
+        generate_enemy
       end
     end
   end
