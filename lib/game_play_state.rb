@@ -152,7 +152,7 @@ class GamePlayState
     player.teleporting = true
 
     @sprites.each do |sprite|
-      if sprite.is_a?(Enemy) && sprite.alive && player.intersects sprite.x, sprite.y, sprite.right_x, sprite.bottom_y
+      if sprite.is_a?(Enemy) && sprite.alive && player.intersects(sprite.x, sprite.y, sprite.right_x, sprite.bottom_y)
         sprite.kill
         player.max_immunity += 1
         player.y = 250
