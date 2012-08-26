@@ -48,7 +48,7 @@ class GamePlayState
       :standing_right => enemy_sheet.getSubImage(TILE_SIZE * 6, 0, TILE_SIZE * 8, TILE_SIZE * 3),
       :dead_left => enemy_sheet.getSubImage(TILE_SIZE * 8, 0, TILE_SIZE * 10, TILE_SIZE * 3),
       :dead_right => enemy_sheet.getSubImage(TILE_SIZE * 10, 0, TILE_SIZE * 12, TILE_SIZE * 3)
-    }, :state => :standing_left)
+    }, :state => :standing_left, :is_npc => true)
 
     arial = Font.new "Arial", Font::PLAIN, 24
     @font = UnicodeFont.new arial
@@ -90,27 +90,28 @@ class GamePlayState
       end
 
       @sprites.each do |sprite|
-        colliding = false
-        death_blocks.each do |block|
-          if sprite.intersects(block[:x], block[:y], block[:right_x], block[:bottom_y])
-            sprite.y = block[:y] - sprite.height
-            colliding = true
+        if sprite.alive
+          colliding = false
+          death_blocks.each do |block|
+            if sprite.intersects(block[:x], block[:y], block[:right_x], block[:bottom_y])
+              sprite.y = block[:y] - sprite.height
+              colliding = true
+            end
           end
-        end
 
-        if colliding
-          if sprite.immunity_level == 0
-            sprite.kill
+          if colliding && !sprite.is_npc
+            if sprite.immunity_level == 0
+              sprite.kill
+            elsif @counter >= 1000 && sprite.immunity_level > 0
+              sprite.immunity_level -= 1
+            end
+          else
+            if !sprite.is_npc && @counter >= 1000 && sprite.immunity_level > 0
+              sprite.increase_immunity
+            end
+            sprite.fall(delta) unless colliding
           end
-          if @counter >= 1000 && sprite.immunity_level > 0
-            sprite.immunity_level -= 1
-          end
-        else
-          if @counter >= 1000 && sprite.immunity_level > 0
-            sprite.increase_immunity
-          end
-          sprite.fall delta
-        end
+        end 
 
       end
 

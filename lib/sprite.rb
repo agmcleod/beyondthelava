@@ -1,7 +1,7 @@
 class Sprite
   START_FALL_RATE = 0.1
   MAX_FALL_RATE = 0.8
-  attr_accessor :x, :y, :graphics, :state, :teleporting, :fallspeed, :immunity_level
+  attr_accessor :x, :y, :graphics, :state, :teleporting, :fallspeed, :immunity_level, :is_npc
   attr_reader :max_immunity
 
   attr_reader :alive
@@ -16,9 +16,9 @@ class Sprite
     @alive = true
 
     self.max_immunity = self.immunity_level || 0
-    # set it to -1 for enemies
-    if self.immunity_level.nil?
-      self.immunity_level = -1
+
+    if self.is_npc.nil?
+      self.is_npc = false
     end
   end
 
