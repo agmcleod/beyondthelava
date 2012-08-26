@@ -17,17 +17,18 @@ java_import org.newdawn.slick.SlickException
 java_import org.newdawn.slick.Input
 java_import org.newdawn.slick.state.StateBasedGame
 
-class ExampleGame < StateBasedGame
+class BeyondTheLava < StateBasedGame
   def initialize
     super "LD48 - Slick - BeyondTheLava"
   end
 
   def initStatesList(gc)
-    addState GamePlayState.new(1)
+    addState BeginGameState.new(1)
+    addState GamePlayState.new(2)
   end
 end
 
-app = AppGameContainer.new(ExampleGame.new)
+app = AppGameContainer.new(BeyondTheLava.new)
 app.setDisplayMode 800, 640, false
 app.setVSync true
 app.start()

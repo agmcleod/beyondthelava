@@ -27,7 +27,7 @@ class GamePlayState
     self.player = Sprite.new :x => 100, :y => 0, :graphics => {
       :standing => player_sheet.getSubImage(0, 0, TILE_SIZE * 2, TILE_SIZE * 4),
       :attacking => player_sheet.getSubImage(TILE_SIZE * 2, 0, TILE_SIZE * 6, TILE_SIZE * 4)
-    }, :immunity_level => 20
+    }, :immunity_level => 0
 
     @sprites = [self.player]
 
@@ -78,9 +78,7 @@ class GamePlayState
 
     if !@paused
       if input.isMousePressed(0)
-        player.x = input.getMouseX - (player.width / 2)
-        player.y = input.getMouseY - (player.height / 2)
-        player.teleporting = true
+        teleport_action input
       end
 
       @sprites.each do |sprite|
@@ -108,9 +106,12 @@ class GamePlayState
 
       end
 
+      if @counter > 300
+        player.teleporting = false
+      end
+
       if @counter > 1000
         @counter -= 1000
-        player.teleporting = false
       end
     end
 
@@ -122,6 +123,22 @@ class GamePlayState
       gc.exit
     end
     
+  end
+
+  def teleport_action(input)
+    player.x = input.getMouseX - (player.width / 2)
+    player.y = input.getMouseY - (player.height / 2)
+    player.teleporting = true
+
+    @sprites.each do |sprite|
+      if sprite.is_a? Enemy
+        if player.intersects sprite.x, sprite.y, sprite.right_x, sprite.bottom_y
+          sprite.kill
+          player.max_immunity += 3
+          player.y = 150
+        end
+      end
+    end
   end
 
   def isAcceptingInput
@@ -187,7 +204,6 @@ class GamePlayState
   end
 
   def mousePressed(button, x, y, count)
-    puts "Pressed"
   end
 
   def mouseReleased(arg0, arg1, arg2, arg3)

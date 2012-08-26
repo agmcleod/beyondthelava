@@ -1,7 +1,8 @@
 class Sprite
   START_FALL_RATE = 0.1
   MAX_FALL_RATE = 0.8
-  attr_accessor :x, :y, :graphics, :state, :teleporting, :fallspeed, :immunity_level, :max_immunity
+  attr_accessor :x, :y, :graphics, :state, :teleporting, :fallspeed, :immunity_level
+  attr_reader :max_immunity
 
   attr_reader :alive
 
@@ -59,6 +60,11 @@ class Sprite
     if self.immunity_level != -1 && self.immunity_level < self.max_immunity
       self.immunity_level += 1
     end
+  end
+
+  def max_immunity=(i)
+    @max_immunity = i
+    self.immunity_level = i
   end
 
   def fall(delta)
